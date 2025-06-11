@@ -1,0 +1,29 @@
+chat-mute-message: "<red>[Chat] Chat has been muted by {player}"
+chat-unmute-message: "<red>[Chat] Chat has been unmuted by {player}"
+chat-muted-message: "<red>The chat is currently muted!"
+
+chat-message-filtered-staff-notification: "<red>[Filter] -> <dark_blue>{sender}: <aqua>{message}"
+
+# If set to true, no message will go through.
+# If set to false, replace the filtered words with *'s
+block-message-on-filter: true
+
+# Notify a user that their message has been filtered
+notify-on-filter: true
+
+# Only sent if "notify-on-filter" is set to true
+chat-filter-filtered: "<red>[Filter] Your message has been filtered!"
+
+
+# Whether the chat will remain its state after the restart of a  server
+persist-mute-through-restarts: true
+
+# Whether the chat is currently muted
+# Value will be ignored when persist-mute-through-restarts is false
+chat-muted: false
+
+# Filters by default on basic bypasses such as
+# s h i t,  sh it, s.h.i-t,  etc
+filtered-words:
+  - fuck
+  - shit
