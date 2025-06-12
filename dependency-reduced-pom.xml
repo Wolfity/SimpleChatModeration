@@ -4,7 +4,7 @@
   <groupId>me.wolfity</groupId>
   <artifactId>SimpleChatModeration</artifactId>
   <name>SimpleChatModeration</name>
-  <version>1.0</version>
+  <version>1.1.0</version>
   <build>
     <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
     <defaultGoal>clean package</defaultGoal>
@@ -41,6 +41,19 @@
             <goals>
               <goal>shade</goal>
             </goals>
+            <configuration>
+              <minimizeJar>true</minimizeJar>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -65,8 +78,9 @@
     </dependency>
   </dependencies>
   <properties>
-    <kotlin.version>2.2.0-RC2</kotlin.version>
+    <kotlin.version>1.9.0</kotlin.version>
     <java.version>17</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <coroutines.version>1.7.3</coroutines.version>
   </properties>
 </project>

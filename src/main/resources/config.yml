@@ -1,7 +1,10 @@
 chat-mute-message: "<red>[Chat] Chat has been muted by {player}"
 chat-unmute-message: "<red>[Chat] Chat has been unmuted by {player}"
 chat-muted-message: "<red>The chat is currently muted!"
-
+no-logs-found: "<red>No chat logs found for {player}"
+chat-log-header: "<aqua>Chat logs for <blue>{player}</blue> (page {pageNum}/{maxPages}):"
+chat-log-entry: "<aqua>{time}: {message}"
+chat-log-footer: ""
 chat-message-filtered-staff-notification: "<red>[Filter] -> <dark_blue>{sender}: <aqua>{message}"
 
 # If set to true, no message will go through.

@@ -2,13 +2,17 @@ package me.wolfity.listeners
 
 import io.papermc.paper.event.player.AsyncChatEvent
 import me.wolfity.SimpleChatMod
+import me.wolfity.cache.ChatMessageCache
 import me.wolfity.constants.Permissions
 import me.wolfity.events.ChatMutedEvent
 import me.wolfity.filter.ChatFilter
 import me.wolfity.filter.WordMatch
+import me.wolfity.logging.ChatMessage
+import me.wolfity.sql.ChatMessages
 import me.wolfity.util.miniMessage
 import me.wolfity.util.sendStyled
 import me.wolfity.util.style
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -39,6 +43,10 @@ class ChatListeners(private val plugin: SimpleChatMod) : Listener {
 
         val rawMessage = miniMessage.serialize(message)
         val containsFiltered = filter.containsFilteredWord(rawMessage)
+
+        val pureContent = PlainTextComponentSerializer.plainText().serialize(message)
+
+        ChatMessageCache.addMessage(ChatMessage(sender = player.uniqueId, content = pureContent))
 
         if (containsFiltered && !player.hasPermission(Permissions.CHAT_FILTER_BYPASS_PERMISSION)) {
             Bukkit.getOnlinePlayers().filter { it.hasPermission(Permissions.CHAT_FILTER_NOTIFY_PERMISSION) }.forEach {
