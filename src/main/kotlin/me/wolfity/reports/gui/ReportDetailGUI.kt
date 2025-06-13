@@ -34,7 +34,6 @@ class ReportDetailGUI(
     }
 
     private fun constructGUI() {
-        println("Constructing GUI")
         setItem(2, buildItem(Material.DIAMOND_SWORD, style("<aqua>Generate chat logs"))) {
             close()
             player.sendStyled("<green>Generating the report!")
