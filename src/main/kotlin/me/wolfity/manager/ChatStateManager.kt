@@ -6,7 +6,7 @@ import me.wolfity.plugin
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
-class ChatManager(plugin: SimpleChatMod) {
+class ChatStateManager(plugin: SimpleChatMod) {
 
     private var _chatMuted: Boolean = false
 

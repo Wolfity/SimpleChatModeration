@@ -4,12 +4,14 @@ import me.wolfity.cache.ChatCacheFlushScheduler
 import me.wolfity.commands.ChatCommands
 import me.wolfity.commands.UserCommandParameter
 import me.wolfity.commands.UserParameterType
+import me.wolfity.gui.GUIListener
 import me.wolfity.listeners.ChatListeners
-import me.wolfity.listeners.PlayerListeners
-import me.wolfity.manager.ChatManager
-import me.wolfity.manager.ChatMessageManager
-import me.wolfity.manager.PlayerManager
+import me.wolfity.player.PlayerListeners
+import me.wolfity.manager.ChatStateManager
+import me.wolfity.logging.ChatMessageManager
+import me.wolfity.player.PlayerManager
 import me.wolfity.misc.UpdateChecker
+import me.wolfity.reports.ChatReportManager
 import me.wolfity.sql.DatabaseManager
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
@@ -26,11 +28,15 @@ class SimpleChatMod : JavaPlugin() {
     }
 
     private lateinit var lamp: Lamp<BukkitCommandActor>
-    private lateinit var _chatManager: ChatManager
+    private lateinit var _chatStateManager: ChatStateManager
     private lateinit var _playerManager: PlayerManager
     private lateinit var _chatMessageManager: ChatMessageManager
+    private lateinit var _chatReportManager: ChatReportManager
 
     private lateinit var cacheFlusher: ChatCacheFlushScheduler
+
+    val chatReportManager: ChatReportManager
+        get() = _chatReportManager
 
     val playerManager: PlayerManager
         get() = _playerManager
@@ -38,8 +44,8 @@ class SimpleChatMod : JavaPlugin() {
     val chatMessageManager: ChatMessageManager
         get() = _chatMessageManager
 
-    val chatManager: ChatManager
-        get() = _chatManager
+    val chatStateManager: ChatStateManager
+        get() = _chatStateManager
 
     override fun onEnable() {
         plugin = this
@@ -63,14 +69,16 @@ class SimpleChatMod : JavaPlugin() {
 
     private fun registerManagers() {
         DatabaseManager().init()
-        this._chatManager = ChatManager(this)
+        this._chatStateManager = ChatStateManager(this)
         this._playerManager = PlayerManager()
         this._chatMessageManager = ChatMessageManager()
+        this._chatReportManager = ChatReportManager()
     }
 
     private fun registerListeners() {
         Bukkit.getPluginManager().registerEvents(ChatListeners(this), this)
         Bukkit.getPluginManager().registerEvents(PlayerListeners(playerManager), this)
+        Bukkit.getPluginManager().registerEvents(GUIListener(), this)
     }
 
     private fun registerCommands() {
@@ -86,7 +94,7 @@ class SimpleChatMod : JavaPlugin() {
     }
 
     private fun updateCheck() {
-        UpdateChecker().getVersion { version ->
+        UpdateChecker.getVersion { version ->
             if (this.description.version == version) {
                 logger.info("There is not a new update available.");
             } else {

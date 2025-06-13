@@ -1,16 +1,18 @@
-package me.wolfity.manager
+package me.wolfity.logging
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import me.wolfity.cache.ChatMessageCache
-import me.wolfity.logging.ChatMessage
+import me.wolfity.plugin
 import me.wolfity.sql.ChatMessages
 import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.count
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.util.*
+import java.util.UUID
 
 class ChatMessageManager {
 
@@ -27,6 +29,65 @@ class ChatMessageManager {
             }
         }
     }
+
+    suspend fun hasMessagesBeforeTimestamp(player: UUID, centerTimestamp: Long): Boolean = withContext(Dispatchers.IO) {
+        val bound = plugin.config.getInt("chat-report-generation-timespan-minutes")
+        val fromTimestamp = centerTimestamp - bound * 60_000
+
+        val cacheMessagesExist = ChatMessageCache.getMessages(player)
+            ?.any { it.timestamp in fromTimestamp..<centerTimestamp } ?: false
+
+        val dbMessagesExist = transaction {
+            ChatMessages
+                .select(ChatMessages.id)
+                .where {
+                    (ChatMessages.sender eq player) and
+                            (ChatMessages.timestamp greaterEq fromTimestamp) and
+                            (ChatMessages.timestamp less centerTimestamp)
+                }
+                .limit(1)
+                .any()
+        }
+
+        cacheMessagesExist || dbMessagesExist
+    }
+
+
+
+    suspend fun generateReportLog(
+        player: UUID,
+        centerTimestamp: Long,
+    ): List<ChatMessage> = withContext(Dispatchers.IO) {
+
+        val bound = plugin.config.getInt("chat-report-generation-timespan-minutes")
+
+        val fromTimestamp = centerTimestamp - bound * 60_000 // convert to ms
+        val toTimestamp = centerTimestamp + bound * 60_000
+
+        val cacheMessages = ChatMessageCache.getMessages(player)
+            ?.filter { it.timestamp in fromTimestamp..toTimestamp }
+            ?.sortedByDescending { it.timestamp } ?: emptyList()
+
+        val dbMessages = transaction {
+            ChatMessages.selectAll()
+                .where {
+                    (ChatMessages.sender eq player) and
+                            (ChatMessages.timestamp.between(fromTimestamp, toTimestamp))
+                }
+                .orderBy(ChatMessages.timestamp to SortOrder.DESC)
+                .map {
+                    ChatMessage(
+                        id = it[ChatMessages.id],
+                        sender = it[ChatMessages.sender],
+                        timestamp = it[ChatMessages.timestamp],
+                        content = it[ChatMessages.content]
+                    )
+                }
+        }
+
+        mergeSortedLists(dbMessages, cacheMessages)
+    }
+
 
     suspend fun getMessagesFrom(uuid: UUID, page: Int): List<ChatMessage> = withContext(Dispatchers.IO) {
         if (page <= 1) {
@@ -97,7 +158,6 @@ class ChatMessageManager {
     }
 
 
-
     private fun mergeSortedLists(
         list1: List<ChatMessage>,
         list2: List<ChatMessage>
@@ -120,7 +180,6 @@ class ChatMessageManager {
 
         return result
     }
-
 
 
 }

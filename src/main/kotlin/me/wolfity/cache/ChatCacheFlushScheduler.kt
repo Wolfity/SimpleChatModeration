@@ -1,6 +1,6 @@
 package me.wolfity.cache
 
-import me.wolfity.manager.ChatMessageManager
+import me.wolfity.logging.ChatMessageManager
 import me.wolfity.plugin
 import me.wolfity.util.launchAsync
 import org.bukkit.scheduler.BukkitRunnable

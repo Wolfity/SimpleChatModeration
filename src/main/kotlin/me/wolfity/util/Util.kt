@@ -5,7 +5,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
+import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -19,6 +21,21 @@ fun launchAsync(block: suspend CoroutineScope.() -> Unit): Job {
     }
 }
 
+/**
+ * Builds an itemstack with the given configuration
+ */
+fun buildItem(material: Material, name: Component, builder: ItemBuilder.() -> Unit = {}): ItemStack {
+    return ItemBuilder(material, name).apply(builder).build()
+}
+
+/**
+ * Builds an itemstack with the given configuration.
+ */
+fun buildItem(material: Material, setup: ItemBuilder.() -> Unit = {}): ItemStack {
+    return ItemBuilder(material).apply(setup).build()
+}
+
+
 fun Player.sendStyled(message: String) {
     this.sendMessage(style(message))
 }
@@ -31,8 +48,9 @@ fun Long.toSeconds() : Int {
     return this.toInt() * 20
 }
 
-fun formatTime(timestamp: Long): String {
-    val formatter = DateTimeFormatter.ofPattern("dd/MM HH:mm")
+fun formatTime(timestamp: Long, includeSeconds: Boolean = false): String {
+    val pattern = if (includeSeconds) "dd/MM HH:mm:ss" else "dd/MM HH:mm"
+    val formatter = DateTimeFormatter.ofPattern(pattern)
         .withZone(ZoneId.systemDefault())
     return formatter.format(Instant.ofEpochMilli(timestamp))
 }

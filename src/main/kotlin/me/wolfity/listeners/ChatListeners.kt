@@ -8,7 +8,6 @@ import me.wolfity.events.ChatMutedEvent
 import me.wolfity.filter.ChatFilter
 import me.wolfity.filter.WordMatch
 import me.wolfity.logging.ChatMessage
-import me.wolfity.sql.ChatMessages
 import me.wolfity.util.miniMessage
 import me.wolfity.util.sendStyled
 import me.wolfity.util.style
@@ -32,7 +31,7 @@ class ChatListeners(private val plugin: SimpleChatMod) : Listener {
     @EventHandler
     fun onChat(event: AsyncChatEvent) {
         val player = event.player
-        val isChatMuted = plugin.chatManager.chatMuted
+        val isChatMuted = plugin.chatStateManager.chatMuted
         val message = event.message()
 
         if (isChatMuted && !player.hasPermission(Permissions.MUTE_CHAT_BYPASS_PERMISSION)) {

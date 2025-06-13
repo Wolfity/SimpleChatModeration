@@ -6,6 +6,27 @@ chat-log-header: "<aqua>Chat logs for <blue>{player}</blue> (page {pageNum}/{max
 chat-log-entry: "<aqua>{time}: {message}"
 chat-log-footer: ""
 chat-message-filtered-staff-notification: "<red>[Filter] -> <dark_blue>{sender}: <aqua>{message}"
+chat-report-success: "<green>Successfully submitted your report!"
+chat-report-notification: "<blue>[Report] <aqua>{reporter} has reported {reported} for <blue>{reason}"
+
+gui-next-page-text: "<blue>Next Page ({current}/{max})"
+gui-previous-page-text: "<blue>Previous Page ({current}/{max})"
+gui-report-icon-title: "<blue>Report #{reportCount} {reported}"
+gui-report-icon-lore:
+  - "<aqua>Reporter: {reporter}"
+  - "<aqua>Reason: {reason}"
+  - "<aqua>At: {time}"
+  - "<aqua>Click to handle/generate logs"
+  - ""
+no-messages-in-past-time: "<red>This player has not sent any messages in the past {minutes} minutes!"
+# When dealing with a chat report, the logs of the reported person
+# Starting from the current time PLUS and MINUS  the value of this will be shown.
+# So if this value is 15
+# And a player gets reported at 6PM
+# The chat report will retrieve their logs from 5:45PM until 6:15PM
+chat-report-generation-timespan-minutes: 15
+
+gui-border-item: GRAY_STAINED_GLASS_PANE
 
 # If set to true, no message will go through.
 # If set to false, replace the filtered words with *'s

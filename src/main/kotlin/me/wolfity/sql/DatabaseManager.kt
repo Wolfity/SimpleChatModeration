@@ -21,7 +21,7 @@ class DatabaseManager {
         Database.connect(dataSource)
 
         transaction {
-            SchemaUtils.create(PlayerRegistry, ChatMessages)
+            SchemaUtils.createMissingTablesAndColumns(PlayerRegistry, ChatMessages, ChatReports)
         }
     }
 
