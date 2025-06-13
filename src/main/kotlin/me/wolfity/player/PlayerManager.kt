@@ -2,7 +2,7 @@ package me.wolfity.player
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import me.wolfity.sql.PlayerRegistry
+import me.wolfity.db.PlayerRegistry
 import org.jetbrains.exposed.sql.insertIgnore
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.selectAll

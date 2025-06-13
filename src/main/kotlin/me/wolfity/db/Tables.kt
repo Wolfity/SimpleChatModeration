@@ -1,9 +1,9 @@
-package me.wolfity.sql
+package me.wolfity.db
 
 import org.jetbrains.exposed.sql.Table
 
 object PlayerRegistry : Table("player_registry") {
-    val uuid = uuid("sender").uniqueIndex()
+    val uuid = uuid("sender")
     val name = varchar("name", 32).index()
     val skin = text("skin").nullable()
     override val primaryKey: PrimaryKey = PrimaryKey(uuid)

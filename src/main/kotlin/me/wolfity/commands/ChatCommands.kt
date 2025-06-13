@@ -113,16 +113,28 @@ class ChatCommands(val plugin: SimpleChatMod) {
                 return@launchAsync
             }
 
-            val hasPreviousMessages = plugin.chatMessageManager.hasMessagesBeforeTimestamp(targetUser.uuid, System. currentTimeMillis())
+            val hasPreviousMessages =
+                plugin.chatMessageManager.hasMessagesBeforeTimestamp(targetUser.uuid, System.currentTimeMillis())
             if (!hasPreviousMessages) {
-                sender.sendStyled(plugin.config.getString("no-messages-in-past-time")!!
-                    .replace("{minutes}", plugin.config.getInt("chat-report-generation-timespan-minutes").toString()))
+                sender.sendStyled(
+                    plugin.config.getString("no-messages-in-past-time")!!
+                        .replace(
+                            "{minutes}",
+                            plugin.config.getInt("chat-report-generation-timespan-minutes").toString()
+                        )
+                )
                 return@launchAsync
             }
 
-            val hasOutstandingReports = plugin.chatReportManager.hasReportFromTo(sender.uniqueId, targetUser.uuid)
+            val maxReportTimeFrameSamePerson = plugin.config.getLong("max-same-person-report-time-minutes")
+            val hasOutstandingReports =
+                plugin.chatReportManager.hasReportFromTo(sender.uniqueId, targetUser.uuid, maxReportTimeFrameSamePerson)
             if (hasOutstandingReports) {
-                sender.sendStyled("<red>You already made a report in the last hour against this player!")
+                sender.sendStyled(
+                    plugin.config.getString("already-reported-within-timeframe")!!.replace(
+                        "{time}", maxReportTimeFrameSamePerson.toInt().toString()
+                    )
+                )
                 return@launchAsync
             }
 

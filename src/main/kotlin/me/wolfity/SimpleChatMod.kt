@@ -12,7 +12,8 @@ import me.wolfity.logging.ChatMessageManager
 import me.wolfity.player.PlayerManager
 import me.wolfity.misc.UpdateChecker
 import me.wolfity.reports.ChatReportManager
-import me.wolfity.sql.DatabaseManager
+import me.wolfity.db.DatabaseManager
+import me.wolfity.files.CustomConfig
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import revxrsal.commands.Lamp
@@ -47,11 +48,15 @@ class SimpleChatMod : JavaPlugin() {
     val chatStateManager: ChatStateManager
         get() = _chatStateManager
 
+    lateinit var dbConfig: CustomConfig
+
     override fun onEnable() {
         plugin = this
         updateCheck()
 
         saveDefaultConfig()
+        loadFiles()
+
         setupLamp()
         registerManagers()
         registerListeners()
@@ -59,7 +64,6 @@ class SimpleChatMod : JavaPlugin() {
 
         this.cacheFlusher = ChatCacheFlushScheduler(chatMessageManager)
         cacheFlusher.start()
-
 
     }
 
@@ -91,6 +95,10 @@ class SimpleChatMod : JavaPlugin() {
                 it.addParameterType(UserCommandParameter::class.java, UserParameterType())
             }
             .build()
+    }
+
+    private fun loadFiles() {
+        dbConfig = CustomConfig("db.yml")
     }
 
     private fun updateCheck() {

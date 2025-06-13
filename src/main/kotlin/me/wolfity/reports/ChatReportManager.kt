@@ -2,7 +2,7 @@ package me.wolfity.reports
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import me.wolfity.sql.ChatReports
+import me.wolfity.db.ChatReports
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.selectAll
@@ -32,7 +32,8 @@ class ChatReportManager {
         transaction {
             ChatReports
                 .selectAll()
-                .orderBy(ChatReports.timestamp to SortOrder.DESC)
+                // Newest reports add the back of the stack
+                .orderBy(ChatReports.timestamp to SortOrder.ASC)
                 .map {
                     ChatReport(
                         id = it[ChatReports.id],
@@ -55,7 +56,7 @@ class ChatReportManager {
         transaction {
             ChatReports
                 .selectAll().where { ChatReports.reporter eq uuid }
-                .orderBy(ChatReports.timestamp to SortOrder.DESC)
+                .orderBy(ChatReports.timestamp to SortOrder.ASC)
                 .map {
                     ChatReport(
                         id = it[ChatReports.id],
@@ -76,7 +77,7 @@ class ChatReportManager {
                 .selectAll().where {
                     (ChatReports.reported eq uuid) and (ChatReports.timestamp greaterEq oneHourAgo)
                 }
-                .orderBy(ChatReports.timestamp to SortOrder.DESC)
+                .orderBy(ChatReports.timestamp to SortOrder.ASC)
                 .map {
                     ChatReport(
                         id = it[ChatReports.id],
@@ -89,10 +90,14 @@ class ChatReportManager {
         }
     }
 
-    suspend fun hasReportFromTo(reporter: UUID, reported: UUID): Boolean = withContext(Dispatchers.IO) {
+    /**
+     * Checks if [reporter] has made any reports against [reported] within the last [timeAgo]
+     */
+    suspend fun hasReportFromTo(reporter: UUID, reported: UUID, minutesAgo: Long): Boolean = withContext(Dispatchers.IO) {
+        val cutoffTimestamp = System.currentTimeMillis() - (minutesAgo * 60_000)
         transaction {
             ChatReports.selectAll().where {
-                (ChatReports.reporter eq reporter) and (ChatReports.reported eq reported)
+                (ChatReports.reporter eq reporter) and (ChatReports.reported eq reported) and (ChatReports.timestamp greaterEq cutoffTimestamp)
             }.limit(1).any()
         }
     }

@@ -8,7 +8,8 @@ chat-log-footer: ""
 chat-message-filtered-staff-notification: "<red>[Filter] -> <dark_blue>{sender}: <aqua>{message}"
 chat-report-success: "<green>Successfully submitted your report!"
 chat-report-notification: "<blue>[Report] <aqua>{reporter} has reported {reported} for <blue>{reason}"
-
+max-same-person-report-time-minutes: 10
+already-reported-within-timeframe: "<red>You already reported this player within the last {time} minutes!"
 gui-next-page-text: "<blue>Next Page ({current}/{max})"
 gui-previous-page-text: "<blue>Previous Page ({current}/{max})"
 gui-report-icon-title: "<blue>Report #{reportCount} {reported}"
