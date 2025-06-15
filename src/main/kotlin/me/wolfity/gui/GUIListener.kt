@@ -43,8 +43,10 @@ class GUIListener : Listener {
         val player = event.player as? Player ?: return
         val guiId = GUI.openInventories[player.uniqueId] ?: return
         val gui = GUI.inventoriesByUUID[guiId] ?: return
-        GUI.openInventories.remove(guiId)
-        GUI.inventoriesByUUID.remove(player.uniqueId)
+
+        GUI.openInventories.remove(player.uniqueId)
+        GUI.inventoriesByUUID.remove(guiId)
+
     }
 
     @EventHandler
