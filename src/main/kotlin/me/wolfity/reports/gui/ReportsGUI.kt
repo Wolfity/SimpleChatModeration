@@ -26,7 +26,7 @@ class ReportsGUI(
 
     private fun constructGUI() {
         val borderItem =
-            buildItem(Material.valueOf(plugin.config.getString("gui-border-item") ?: "GRAY_STAINED_GLASS_PANE"))
+            buildItem(Material.valueOf(plugin.config.getString("report-overview-gui-border-item") ?: "GRAY_STAINED_GLASS_PANE"))
         val borderSlots = listOf(
             // Top row
             0, 1, 2, 3, 4, 5, 6, 7, 8,

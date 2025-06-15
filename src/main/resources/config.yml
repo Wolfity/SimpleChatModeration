@@ -19,6 +19,23 @@ gui-report-icon-lore:
   - "<aqua>At: {time}"
   - "<aqua>Click to handle/generate logs"
   - ""
+
+cannot-self-report: "<red>You cannot report yourself!"
+player-does-not-exist: "<red>The player {player} does not exist!"
+invalid-chatlog-page: "<red>This player does not have logs on that page"
+
+report-detail-gui-generate-logs-item: DIAMOND_SWORD
+report-detail-gui-generate-logs-item-name: "<aqua>Generate Chat Logs"
+
+report-detail-gui-close-report-item: RED_WOOL
+report-detail-gui-close-report-item-name: "<red>Close Report"
+
+report-detail-gui-close-all-reports-item: BEDROCK
+report-detail-gui-close-all-reports-item-name: "<dark_red>Close All Reports"
+
+report-detail-gui-back-item: BARRIER
+report-detail-gui-back-item-name: "<red>Back"
+
 no-messages-in-past-time: "<red>This player has not sent any messages in the past {minutes} minutes!"
 # When dealing with a chat report, the logs of the reported person
 # Starting from the current time PLUS and MINUS  the value of this will be shown.
@@ -27,7 +44,7 @@ no-messages-in-past-time: "<red>This player has not sent any messages in the pas
 # The chat report will retrieve their logs from 5:45PM until 6:15PM
 chat-report-generation-timespan-minutes: 15
 
-gui-border-item: GRAY_STAINED_GLASS_PANE
+report-overview-gui-border-item: GRAY_STAINED_GLASS_PANE
 
 # If set to true, no message will go through.
 # If set to false, replace the filtered words with *'s

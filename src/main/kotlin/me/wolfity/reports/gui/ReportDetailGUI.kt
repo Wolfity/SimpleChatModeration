@@ -34,7 +34,10 @@ class ReportDetailGUI(
     }
 
     private fun constructGUI() {
-        setItem(2, buildItem(Material.DIAMOND_SWORD, style("<aqua>Generate chat logs"))) {
+        setItem(2, buildItem(
+            material = Material.valueOf(plugin.config.getString("report-detail-gui-generate-logs-item")!!),
+            name = style(plugin.config.getString("report-detail-gui-generate-logs-item-name")!!)
+        )) {
             close()
             player.sendStyled("<green>Generating the report!")
             val timestamp = chatReport.timeStamp
@@ -64,7 +67,10 @@ class ReportDetailGUI(
             }
         }
 
-        setItem(4, buildItem(Material.RED_WOOL, style("<red>Close report"))) {
+        setItem(4, buildItem(
+            material = Material.valueOf(plugin.config.getString("report-detail-gui-close-report-item")!!),
+            name = style(plugin.config.getString("report-detail-gui-close-report-item-name")!!)
+        )) {
             launchAsync {
                 plugin.chatReportManager.resolveReport(chatReport.id)
                 player.sendStyled("<red>Closed report ${chatReport.id}")
@@ -72,7 +78,10 @@ class ReportDetailGUI(
             }
         }
 
-        setItem(6, buildItem(Material.BEDROCK, style("<dark_red>Close all reports from this player")) {
+        setItem(6,buildItem(
+            material = Material.valueOf(plugin.config.getString("report-detail-gui-close-all-reports-item")!!),
+            name = style(plugin.config.getString("report-detail-gui-close-all-reports-item-name")!!)
+        ) {
             setLore(
                 listOf(
                     style("<red><bold>Careful!"),
@@ -88,7 +97,10 @@ class ReportDetailGUI(
             }
         }
 
-        setItem(8, buildItem(Material.BARRIER, style("<red>Back"))) {
+        setItem(8, buildItem(
+            material = Material.valueOf(plugin.config.getString("report-detail-gui-back-item")!!),
+            name = style(plugin.config.getString("report-detail-gui-back-item-name")!!)
+        )) {
             previousGUI.openGUI()
         }
 

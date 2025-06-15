@@ -32,6 +32,7 @@ class CustomConfig(
         config.save(configFile)
     }
 
+    fun getLong(path: String): Long = config.getLong(path)
     fun getString(path: String): String = config.getString(path)!!
     fun getStringSafe(path: String) = config.getString(path)
     fun getInt(path: String): Int = config.getInt(path)

@@ -36,13 +36,13 @@ class ChatCommands(val plugin: SimpleChatMod) {
 
         val targetPlayerData = plugin.playerManager.getDataByName(target.name)
         if (targetPlayerData == null) {
-            sender.sendStyled("<red>No user by the name of ${target.name} exists!")
+            sender.sendStyled(plugin.config.getString("player-does-not-exist")!!.replace("{player}", target.name))
             return
         }
 
         val maxPages = plugin.chatMessageManager.getMaxPagesForPlayer(targetPlayerData.uuid)
         if (pageNum > maxPages) {
-            sender.sendStyled("<red>This player has no logs on that page!")
+            sender.sendStyled(plugin.config.getString("invalid-chatlog-page")!!)
             return
         }
 
@@ -82,7 +82,7 @@ class ChatCommands(val plugin: SimpleChatMod) {
             } else {
                 val targetUser = plugin.playerManager.getDataByName(target.name)
                 if (targetUser == null) {
-                    sender.sendStyled("<red>This user does not exist!")
+                    sender.sendStyled(plugin.config.getString("player-does-not-exist")!!.replace("{player}", target.name))
                     return@launchAsync
                 }
                 plugin.chatReportManager.getReportsAgainstPlayer(targetUser.uuid)
@@ -104,12 +104,12 @@ class ChatCommands(val plugin: SimpleChatMod) {
         launchAsync {
             val targetUser = plugin.playerManager.getDataByName(target.name)
             if (targetUser == null) {
-                sender.sendStyled("<red>This player does not exist!")
+                sender.sendStyled(plugin.config.getString("player-does-not-exist")!!.replace("{player}", target.name))
                 return@launchAsync
             }
 
             if (targetUser.uuid == sender.uniqueId) {
-                sender.sendStyled("<red>You cannot report yourself!")
+                sender.sendStyled(plugin.config.getString("cannot-self-report")!!)
                 return@launchAsync
             }
 
