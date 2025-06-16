@@ -17,7 +17,7 @@ class ChatCacheFlushScheduler(private val manager: ChatMessageManager) {
         plugin.logger.info("[SimpleChatModeration] - Cache has been initialised")
         task = object : BukkitRunnable() {
             override fun run() {
-                val messagesToFlush = ChatMessageCache.drain()
+                val messagesToFlush = plugin.chatMessageCache.drain()
                 if (messagesToFlush.isNotEmpty()) {
                     launchAsync {
                         manager.saveChatMessage(messagesToFlush)
@@ -31,7 +31,7 @@ class ChatCacheFlushScheduler(private val manager: ChatMessageManager) {
 
     fun shutdown() {
         task?.cancel()
-        val remaining = ChatMessageCache.drain()
+        val remaining = plugin.chatMessageCache.drain()
         if (remaining.isEmpty()) return
         launchAsync {
             manager.saveChatMessage(remaining)

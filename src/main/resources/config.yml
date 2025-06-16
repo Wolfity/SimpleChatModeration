@@ -36,6 +36,10 @@ report-detail-gui-close-all-reports-item-name: "<dark_red>Close All Reports"
 report-detail-gui-back-item: BARRIER
 report-detail-gui-back-item-name: "<red>Back"
 
+chat-slow-announcement: "<red>The chat has been slowed to one message per {time} second(s)!"
+chat-slow-message: "<red>Hold on, chat is currently slowed! 1 message per {time} second(s)!"
+chat-slow-reset: "<red>The chat slow has been lifted!"
+
 no-messages-in-past-time: "<red>This player has not sent any messages in the past {minutes} minutes!"
 # When dealing with a chat report, the logs of the reported person
 # Starting from the current time PLUS and MINUS  the value of this will be shown.
@@ -63,6 +67,7 @@ persist-mute-through-restarts: true
 # Whether the chat is currently muted
 # Value will be ignored when persist-mute-through-restarts is false
 chat-muted: false
+chat-slow-seconds: 0
 
 # Filters by default on basic bypasses such as
 # s h i t,  sh it, s.h.i-t,  etc

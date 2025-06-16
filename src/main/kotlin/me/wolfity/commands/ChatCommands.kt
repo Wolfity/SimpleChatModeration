@@ -14,6 +14,7 @@ import org.bukkit.entity.Player
 import revxrsal.commands.annotation.Command
 import revxrsal.commands.annotation.Named
 import revxrsal.commands.annotation.Optional
+import revxrsal.commands.annotation.Range
 import revxrsal.commands.bukkit.annotation.CommandPermission
 import java.security.Permission
 
@@ -23,6 +24,18 @@ class ChatCommands(val plugin: SimpleChatMod) {
     @CommandPermission(Permissions.MUTE_CHAT_PERMISSION)
     fun onMuteChat(sender: Player) {
         plugin.chatStateManager.toggleChatMuted(sender)
+    }
+
+    @Command("slowchat")
+    @CommandPermission(Permissions.SLOW_CHAT)
+    fun onSlowChat(sender: Player, @Named("seconds") @Range(min = 0.0) amount: Int) {
+        plugin.chatStateManager.slowChat(amount)
+    }
+
+    @Command("resetslowchat")
+    @CommandPermission(Permissions.SLOW_CHAT)
+    fun onSlowChat(sender: Player) {
+        plugin.chatStateManager.resetSlow()
     }
 
     @Command("chatlogs")

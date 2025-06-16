@@ -4,7 +4,7 @@ import me.wolfity.logging.ChatMessage
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-object ChatMessageCache {
+class ChatMessageCache {
 
     private val playerMessages = ConcurrentHashMap<UUID, MutableList<ChatMessage>>()
 

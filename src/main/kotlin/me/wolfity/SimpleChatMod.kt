@@ -1,6 +1,7 @@
 package me.wolfity
 
 import me.wolfity.cache.ChatCacheFlushScheduler
+import me.wolfity.cache.ChatMessageCache
 import me.wolfity.commands.ChatCommands
 import me.wolfity.commands.UserCommandParameter
 import me.wolfity.commands.UserParameterType
@@ -14,6 +15,7 @@ import me.wolfity.misc.UpdateChecker
 import me.wolfity.reports.ChatReportManager
 import me.wolfity.db.DatabaseManager
 import me.wolfity.files.CustomConfig
+import me.wolfity.logging.ChatMessage
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import revxrsal.commands.Lamp
@@ -33,7 +35,7 @@ class SimpleChatMod : JavaPlugin() {
     private lateinit var _playerManager: PlayerManager
     private lateinit var _chatMessageManager: ChatMessageManager
     private lateinit var _chatReportManager: ChatReportManager
-
+    private lateinit var _chatMessageCache: ChatMessageCache
     private lateinit var cacheFlusher: ChatCacheFlushScheduler
 
     val chatReportManager: ChatReportManager
@@ -47,6 +49,9 @@ class SimpleChatMod : JavaPlugin() {
 
     val chatStateManager: ChatStateManager
         get() = _chatStateManager
+
+    val chatMessageCache: ChatMessageCache
+        get() = _chatMessageCache
 
     lateinit var dbConfig: CustomConfig
 
@@ -73,6 +78,7 @@ class SimpleChatMod : JavaPlugin() {
 
     private fun registerManagers() {
         DatabaseManager().init()
+        this._chatMessageCache = ChatMessageCache()
         this._chatStateManager = ChatStateManager(this)
         this._playerManager = PlayerManager()
         this._chatMessageManager = ChatMessageManager()

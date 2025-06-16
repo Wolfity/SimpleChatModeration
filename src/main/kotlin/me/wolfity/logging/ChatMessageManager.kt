@@ -33,8 +33,8 @@ class ChatMessageManager {
         val bound = plugin.config.getInt("chat-report-generation-timespan-minutes")
         val fromTimestamp = centerTimestamp - bound * 60_000
 
-        val cacheMessagesExist = ChatMessageCache.getMessages(player)
-            ?.any { it.timestamp in fromTimestamp..<centerTimestamp } ?: false
+        val cacheMessagesExist = plugin.chatMessageCache.getMessages(player)
+            ?.any { it.timestamp in fromTimestamp..<centerTimestamp } == true
 
         val dbMessagesExist = transaction {
             ChatMessages
@@ -63,7 +63,7 @@ class ChatMessageManager {
         val fromTimestamp = centerTimestamp - bound * 60_000 // convert to ms
         val toTimestamp = centerTimestamp + bound * 60_000
 
-        val cacheMessages = ChatMessageCache.getMessages(player)
+        val cacheMessages = plugin.chatMessageCache.getMessages(player)
             ?.filter { it.timestamp in fromTimestamp..toTimestamp }
             ?.sortedByDescending { it.timestamp } ?: emptyList()
 
@@ -97,7 +97,7 @@ class ChatMessageManager {
     }
 
     suspend fun getMaxPagesForPlayer(uuid: UUID): Int = withContext(Dispatchers.IO) {
-        val cacheMessagesCount = ChatMessageCache.getMessages(uuid)?.size ?: 0
+        val cacheMessagesCount = plugin.chatMessageCache.getMessages(uuid)?.size ?: 0
 
         val dbCount = transaction {
             ChatMessages
@@ -113,7 +113,7 @@ class ChatMessageManager {
     }
 
     private fun getFirstPageMessages(uuid: UUID, pageSize: Int): List<ChatMessage> {
-        val cacheMessages = ChatMessageCache.getMessages(uuid)?.sortedByDescending { it.timestamp } ?: emptyList()
+        val cacheMessages = plugin.chatMessageCache.getMessages(uuid)?.sortedByDescending { it.timestamp } ?: emptyList()
         val cacheSize = cacheMessages.size
         val dbNeeded = (pageSize - cacheSize).coerceAtLeast(0)
 
@@ -135,7 +135,7 @@ class ChatMessageManager {
     }
 
     private fun getPagedMessages(uuid: UUID, page: Int, pageSize: Int): List<ChatMessage> {
-        val cacheMessages = ChatMessageCache.getMessages(uuid) ?: emptyList()
+        val cacheMessages = plugin.chatMessageCache.getMessages(uuid) ?: emptyList()
         val cacheSize = cacheMessages.size
         val pageIndex = (page - 1).coerceAtLeast(0)
         val adjustedOffset = (pageIndex * pageSize - cacheSize).coerceAtLeast(0).toLong()
