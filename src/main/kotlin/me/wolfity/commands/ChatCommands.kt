@@ -159,14 +159,15 @@ class ChatCommands(val plugin: SimpleChatMod) {
                 .replace("{reported}", targetUser.name)
                 .replace("{reason}", reason.joinToString(" "))
 
-            val message = plugin.config.getString("embed-body-chat-report")
-            plugin.webhookManager.sendEmbedMessage(
-                message!!
-                    .replace("{sender}", sender.name)
-                    .replace("{reported}", targetUser.name)
-                    .replace("{reason}", reason.joinToString(" ")),
-                WebhookManager.NotificationReason.CHAT_REPORT
-            )
+            plugin.config.getString("embed-body-chat-report")?.let {
+                plugin.webhookManager.sendEmbedMessage(
+                    it
+                        .replace("{sender}", sender.name)
+                        .replace("{reported}", targetUser.name)
+                        .replace("{reason}", reason.joinToString(" ")),
+                    WebhookManager.NotificationReason.CHAT_REPORT
+                )
+            }
 
             Bukkit.getOnlinePlayers()
                 .filter { it.hasPermission(Permissions.CHAT_REPORT_HANDLE_PERMISSION) }

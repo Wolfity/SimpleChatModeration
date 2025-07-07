@@ -104,11 +104,12 @@ class ChatListeners(private val plugin: SimpleChatMod) : Listener {
             event.message(style(censored))
         }
 
-        val discordMessage = plugin.config.getString("embed-body-chat-filter")!!
-            .replace("{sender}", player.name)
-            .replace("{message}",  rawMessage)
+        plugin.config.getString("embed-body-chat-filter")?.let {
+            it.replace("{sender}", player.name)
+             .replace("{message}",  rawMessage)
 
-        plugin.webhookManager.sendEmbedMessage(discordMessage, WebhookManager.NotificationReason.FILTER)
+            plugin.webhookManager.sendEmbedMessage(it, WebhookManager.NotificationReason.FILTER)
+        }
 
     }
 
