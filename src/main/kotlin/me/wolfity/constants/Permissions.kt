@@ -12,4 +12,5 @@ object Permissions {
     const val CHAT_REPORT_HANDLE_PERMISSION: String = "$BASE.chatreports.handle"
     const val SLOW_CHAT: String = "$BASE.chat.slow"
     const val SLOW_CHAT_BYPASS: String = "$BASE.chat.slow.bypass"
+    const val PLUGIN_INFO_PERMISSION: String = "$BASE.plugin.info"
 }

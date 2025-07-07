@@ -2,13 +2,17 @@ package me.wolfity.commands
 
 import me.wolfity.SimpleChatMod
 import me.wolfity.constants.Permissions
+import me.wolfity.misc.UpdateChecker
 import me.wolfity.reports.ChatReport
 import me.wolfity.reports.gui.ReportsGUI
 import me.wolfity.util.formatTime
+import me.wolfity.util.isValidUrl
 import me.wolfity.util.launchAsync
 import me.wolfity.util.sendStyled
 import me.wolfity.util.style
 import me.wolfity.webhook.WebhookManager
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -16,10 +20,46 @@ import revxrsal.commands.annotation.Command
 import revxrsal.commands.annotation.Named
 import revxrsal.commands.annotation.Optional
 import revxrsal.commands.annotation.Range
+import revxrsal.commands.annotation.Subcommand
 import revxrsal.commands.bukkit.annotation.CommandPermission
 import java.security.Permission
 
 class ChatCommands(val plugin: SimpleChatMod) {
+
+    @Command("scm", "simplechatmod", "simplechatmoderation")
+    @CommandPermission(Permissions.PLUGIN_INFO_PERMISSION)
+    fun onInfo(sender: Player) {
+        sendInfo(sender)
+    }
+
+    @Command("scm", "simplechatmod", "simplechatmoderation")
+    @Subcommand("about", "info")
+    @CommandPermission(Permissions.PLUGIN_INFO_PERMISSION)
+    fun onInfoAbout(sender: Player) {
+        sendInfo(sender)
+    }
+
+    private fun sendInfo(sender: Player) {
+        UpdateChecker.getVersion { latest ->
+            val msg =
+                mutableListOf(style("<red><bold>Simple Chat Moderation"))
+                    .plus(
+                        plugin.config.getStringList("plugin-info")
+                            .map { line ->
+                                line
+                                    .replace("{currentVersion}", plugin.description.version)
+                                    .replace("{latestVersion}", latest!!)
+                                    .replace("{database}", plugin.dbConfig.getString("database-type"))
+                                    .replace(
+                                        "{webhookEnabled}",
+                                        isValidUrl(plugin.config.getString("webhook-url")!!).toString()
+                                    )
+                            }
+                            .map { style(it) }
+                    )
+            sender.sendMessage(Component.join(JoinConfiguration.newlines(), msg))
+        }
+    }
 
     @Command("mutechat")
     @CommandPermission(Permissions.MUTE_CHAT_PERMISSION)
@@ -96,7 +136,9 @@ class ChatCommands(val plugin: SimpleChatMod) {
             } else {
                 val targetUser = plugin.playerManager.getDataByName(target.name)
                 if (targetUser == null) {
-                    sender.sendStyled(plugin.config.getString("player-does-not-exist")!!.replace("{player}", target.name))
+                    sender.sendStyled(
+                        plugin.config.getString("player-does-not-exist")!!.replace("{player}", target.name)
+                    )
                     return@launchAsync
                 }
                 plugin.chatReportManager.getReportsAgainstPlayer(targetUser.uuid)

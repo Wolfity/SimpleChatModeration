@@ -21,7 +21,7 @@ import org.bukkit.event.Listener
 
 class ChatListeners(private val plugin: SimpleChatMod) : Listener {
 
-    private val filter = ChatFilter(plugin.config.getStringList("filtered-words"))
+    private val filter = ChatFilter(plugin.filteredWordsConfig.getStringList("filtered-words").also { println(it) })
 
     @EventHandler
     fun onChatMuted(event: ChatMutedEvent) {

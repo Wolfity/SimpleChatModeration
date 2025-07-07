@@ -21,6 +21,12 @@ gui-report-icon-lore:
   - "<aqua>Click to handle/generate logs"
   - ""
 
+plugin-info:
+  - "<red>Version: {currentVersion}"
+  - "<red>Latest Version: {latestVersion}"
+  - "<red>Database Type: {database}"
+  - "<red>Valid Webhook URL: {webhookEnabled}"
+
 cannot-self-report: "<red>You cannot report yourself!"
 player-does-not-exist: "<red>The player {player} does not exist!"
 invalid-chatlog-page: "<red>This player does not have logs on that page"
@@ -69,12 +75,6 @@ persist-mute-through-restarts: true
 # Value will be ignored when persist-mute-through-restarts is false
 chat-muted: false
 chat-slow-seconds: 0
-
-# Filters by default on basic bypasses such as
-# s h i t,  sh it, s.h.i-t,  etc
-filtered-words:
-  - fuck
-  - shit
 
 webhook-url: ""
 embed-title-chat-report: "Chat Report"

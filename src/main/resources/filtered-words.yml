@@ -1,0 +1,5 @@
+# Filters by default on basic bypasses such as
+# s h i t,  sh it, s.h.i-t,  etc
+filtered-words:
+  - fuck
+  - shit

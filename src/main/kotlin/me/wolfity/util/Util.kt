@@ -8,6 +8,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import java.net.URL
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -53,4 +54,13 @@ fun formatTime(timestamp: Long, includeSeconds: Boolean = false): String {
     val formatter = DateTimeFormatter.ofPattern(pattern)
         .withZone(ZoneId.systemDefault())
     return formatter.format(Instant.ofEpochMilli(timestamp))
+}
+
+fun isValidUrl(urlStr: String): Boolean {
+    return try {
+        URL(urlStr).toURI()
+        true
+    } catch (e: Exception) {
+        false
+    }
 }

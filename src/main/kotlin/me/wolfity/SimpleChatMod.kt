@@ -15,15 +15,12 @@ import me.wolfity.misc.UpdateChecker
 import me.wolfity.reports.ChatReportManager
 import me.wolfity.db.DatabaseManager
 import me.wolfity.files.CustomConfig
-import me.wolfity.logging.ChatMessage
 import me.wolfity.webhook.WebhookManager
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
-import org.bukkit.scheduler.BukkitRunnable
 import revxrsal.commands.Lamp
 import revxrsal.commands.bukkit.BukkitLamp
 import revxrsal.commands.bukkit.actor.BukkitCommandActor
-import java.util.UUID
 
 lateinit var plugin: SimpleChatMod
 
@@ -61,6 +58,7 @@ class SimpleChatMod : JavaPlugin() {
         get() = _webhookManager
 
     lateinit var dbConfig: CustomConfig
+    lateinit var filteredWordsConfig: CustomConfig
 
     override fun onEnable() {
         plugin = this
@@ -112,6 +110,7 @@ class SimpleChatMod : JavaPlugin() {
 
     private fun loadFiles() {
         dbConfig = CustomConfig("db.yml")
+        filteredWordsConfig = CustomConfig("filtered-words.yml")
     }
 
     private fun updateCheck() {
