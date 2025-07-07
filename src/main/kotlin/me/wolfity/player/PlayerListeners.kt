@@ -31,7 +31,10 @@ class PlayerListeners(private val playerManager: PlayerManager) : Listener {
                 UpdateChecker.getVersion { version ->
                     if (plugin.description.version != version) {
                         val currentVersion = plugin.description.version
-                        player.sendStyled("<red>There is an update available for Simple Chat Moderation: Current: $currentVersion, latest is $version")
+                        val msg = plugin.config.getString("outdated-version")!!
+                            .replace("{currentVersion}", currentVersion)
+                            .replace("{newVersion}", version!!)
+                        player.sendStyled(msg)
                     }
                 }
             }

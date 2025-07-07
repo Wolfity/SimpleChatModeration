@@ -16,11 +16,14 @@ import me.wolfity.reports.ChatReportManager
 import me.wolfity.db.DatabaseManager
 import me.wolfity.files.CustomConfig
 import me.wolfity.logging.ChatMessage
+import me.wolfity.webhook.WebhookManager
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.scheduler.BukkitRunnable
 import revxrsal.commands.Lamp
 import revxrsal.commands.bukkit.BukkitLamp
 import revxrsal.commands.bukkit.actor.BukkitCommandActor
+import java.util.UUID
 
 lateinit var plugin: SimpleChatMod
 
@@ -37,6 +40,7 @@ class SimpleChatMod : JavaPlugin() {
     private lateinit var _chatReportManager: ChatReportManager
     private lateinit var _chatMessageCache: ChatMessageCache
     private lateinit var cacheFlusher: ChatCacheFlushScheduler
+    private lateinit var _webhookManager: WebhookManager
 
     val chatReportManager: ChatReportManager
         get() = _chatReportManager
@@ -52,6 +56,9 @@ class SimpleChatMod : JavaPlugin() {
 
     val chatMessageCache: ChatMessageCache
         get() = _chatMessageCache
+
+    val webhookManager: WebhookManager
+        get() = _webhookManager
 
     lateinit var dbConfig: CustomConfig
 
@@ -69,7 +76,6 @@ class SimpleChatMod : JavaPlugin() {
 
         this.cacheFlusher = ChatCacheFlushScheduler(chatMessageManager)
         cacheFlusher.start()
-
     }
 
     override fun onDisable() {
@@ -83,6 +89,7 @@ class SimpleChatMod : JavaPlugin() {
         this._playerManager = PlayerManager()
         this._chatMessageManager = ChatMessageManager()
         this._chatReportManager = ChatReportManager()
+        this._webhookManager = WebhookManager()
     }
 
     private fun registerListeners() {

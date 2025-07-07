@@ -12,6 +12,7 @@ import me.wolfity.logging.ChatMessage
 import me.wolfity.util.miniMessage
 import me.wolfity.util.sendStyled
 import me.wolfity.util.style
+import me.wolfity.webhook.WebhookManager
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -102,6 +103,13 @@ class ChatListeners(private val plugin: SimpleChatMod) : Listener {
             val censored = censorMessage(rawMessage, matches)
             event.message(style(censored))
         }
+
+        val discordMessage = plugin.config.getString("embed-body-chat-filter")!!
+            .replace("{sender}", player.name)
+            .replace("{message}",  rawMessage)
+
+        plugin.webhookManager.sendEmbedMessage(discordMessage, WebhookManager.NotificationReason.FILTER)
+
     }
 
     private fun censorMessage(original: String, matches: List<WordMatch>): String {

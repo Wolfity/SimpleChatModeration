@@ -1,3 +1,4 @@
+outdated-version: "<red>There is an update available for Simple Chat Moderation: Current: {currentVersion}, latest is {latestVersion}"
 chat-mute-message: "<red>[Chat] Chat has been muted by {player}"
 chat-unmute-message: "<red>[Chat] Chat has been unmuted by {player}"
 chat-muted-message: "<red>The chat is currently muted!"
@@ -74,3 +75,14 @@ chat-slow-seconds: 0
 filtered-words:
   - fuck
   - shit
+
+webhook-url: "your-url"
+embed-title-chat-report: "Chat Report"
+embed-body-chat-report: "{sender} reported {reported} for {reason}"
+embed-color-chat-report: "#ffaa00"
+embed-footer-chat-report: "YourServer.com"
+
+embed-title-chat-filter: "Filtered Message"
+embed-body-chat-filter: "{sender}: {message}"
+embed-color-chat-filter: "#ffaa00"
+embed-footer-chat-filter: "YourServer.com"

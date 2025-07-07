@@ -8,6 +8,7 @@ import me.wolfity.util.formatTime
 import me.wolfity.util.launchAsync
 import me.wolfity.util.sendStyled
 import me.wolfity.util.style
+import me.wolfity.webhook.WebhookManager
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -157,6 +158,15 @@ class ChatCommands(val plugin: SimpleChatMod) {
                 .replace("{reporter}", sender.name)
                 .replace("{reported}", targetUser.name)
                 .replace("{reason}", reason.joinToString(" "))
+
+            val message = plugin.config.getString("embed-body-chat-report")
+            plugin.webhookManager.sendEmbedMessage(
+                message!!
+                    .replace("{sender}", sender.name)
+                    .replace("{reported}", targetUser.name)
+                    .replace("{reason}", reason.joinToString(" ")),
+                WebhookManager.NotificationReason.CHAT_REPORT
+            )
 
             Bukkit.getOnlinePlayers()
                 .filter { it.hasPermission(Permissions.CHAT_REPORT_HANDLE_PERMISSION) }

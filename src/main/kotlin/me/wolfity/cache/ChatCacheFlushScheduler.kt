@@ -18,10 +18,11 @@ class ChatCacheFlushScheduler(private val manager: ChatMessageManager) {
         task = object : BukkitRunnable() {
             override fun run() {
                 val messagesToFlush = plugin.chatMessageCache.drain()
+                val count = messagesToFlush.size
                 if (messagesToFlush.isNotEmpty()) {
                     launchAsync {
                         manager.saveChatMessage(messagesToFlush)
-                        plugin.logger.info("[SimpleChatModeration] - Cache has been flushed to the database")
+                        plugin.logger.info("[SimpleChatModeration] - $count cached messages have been flushed to the database")
                     }
                 }
             }
