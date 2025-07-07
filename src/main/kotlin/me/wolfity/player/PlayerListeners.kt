@@ -33,7 +33,7 @@ class PlayerListeners(private val playerManager: PlayerManager) : Listener {
                         val currentVersion = plugin.description.version
                         val msg = plugin.config.getString("outdated-version")!!
                             .replace("{currentVersion}", currentVersion)
-                            .replace("{newVersion}", version!!)
+                            .replace("{latestVersion}", version!!)
                         player.sendStyled(msg)
                     }
                 }
