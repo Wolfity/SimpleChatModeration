@@ -76,7 +76,7 @@ filtered-words:
   - fuck
   - shit
 
-webhook-url: "your-url"
+webhook-url: ""
 embed-title-chat-report: "Chat Report"
 embed-body-chat-report: "{sender} reported {reported} for {reason}"
 embed-color-chat-report: "#ffaa00"
