@@ -105,10 +105,11 @@ class ChatListeners(private val plugin: SimpleChatMod) : Listener {
         }
 
         plugin.config.getString("embed-body-chat-filter")?.let {
-            it.replace("{sender}", player.name)
-             .replace("{message}",  rawMessage)
-
-            plugin.webhookManager.sendEmbedMessage(it, WebhookManager.NotificationReason.FILTER)
+            plugin.webhookManager.sendEmbedMessage(
+                it
+                    .replace("{sender}", player.name)
+                    .replace("{message}",  rawMessage)
+                , WebhookManager.NotificationReason.FILTER)
         }
 
     }
