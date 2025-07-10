@@ -38,4 +38,8 @@ class CustomConfig(
     fun getInt(path: String): Int = config.getInt(path)
     fun getStringList(path: String): List<String> = config.getStringList(path)
     fun getBoolean(path: String): Boolean = config.getBoolean(path)
+    fun set(path: String, value: Any) {
+        this.config.set(path, value)
+        save()
+    }
 }

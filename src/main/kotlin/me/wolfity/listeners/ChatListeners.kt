@@ -17,11 +17,10 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 
 class ChatListeners(private val plugin: SimpleChatMod) : Listener {
-
-    private val filter = ChatFilter(plugin.filteredWordsConfig.getStringList("filtered-words"))
 
     @EventHandler
     fun onChatMuted(event: ChatMutedEvent) {
@@ -38,7 +37,7 @@ class ChatListeners(private val plugin: SimpleChatMod) : Listener {
         Bukkit.broadcast(style(plugin.config.getString(messagePath)!!.replace("{time}", event.slowSeconds.toString())))
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     fun onChat(event: AsyncChatEvent) {
         val player = event.player
         val isChatMuted = plugin.chatStateManager.chatMuted
@@ -51,7 +50,7 @@ class ChatListeners(private val plugin: SimpleChatMod) : Listener {
         }
 
         val rawMessage = miniMessage.serialize(message)
-        val containsFiltered = filter.containsFilteredWord(rawMessage)
+        val containsFiltered = plugin.chatFilter.containsFilteredWord(rawMessage)
 
         if (containsFiltered && !player.hasPermission(Permissions.CHAT_FILTER_BYPASS_PERMISSION)) {
             handleFiltering(event, rawMessage, player)
@@ -99,7 +98,7 @@ class ChatListeners(private val plugin: SimpleChatMod) : Listener {
                 player.sendStyled(plugin.config.getString("chat-filter-filtered")!!)
             }
         } else {
-            val matches = filter.findFilteredWords(rawMessage)
+            val matches = plugin.chatFilter.findFilteredWords(rawMessage)
             val censored = censorMessage(rawMessage, matches)
             event.message(style(censored))
         }

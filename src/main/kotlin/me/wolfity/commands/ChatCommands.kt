@@ -13,27 +13,35 @@ import me.wolfity.util.style
 import me.wolfity.webhook.WebhookManager
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
+import net.kyori.adventure.text.event.ClickEvent
+import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import org.checkerframework.checker.units.qual.h
 import revxrsal.commands.annotation.Command
 import revxrsal.commands.annotation.Named
 import revxrsal.commands.annotation.Optional
 import revxrsal.commands.annotation.Range
 import revxrsal.commands.annotation.Subcommand
+import revxrsal.commands.annotation.SuggestWith
+import revxrsal.commands.annotation.Usage
 import revxrsal.commands.bukkit.annotation.CommandPermission
 import java.security.Permission
 
 class ChatCommands(val plugin: SimpleChatMod) {
 
     @Command("scm", "simplechatmod", "simplechatmoderation")
+    @Usage("/scm")
     @CommandPermission(Permissions.PLUGIN_INFO_PERMISSION)
     fun onInfo(sender: Player) {
         sendInfo(sender)
     }
 
+
     @Command("scm", "simplechatmod", "simplechatmoderation")
     @Subcommand("about", "info")
+    @Usage("/scm info")
     @CommandPermission(Permissions.PLUGIN_INFO_PERMISSION)
     fun onInfoAbout(sender: Player) {
         sendInfo(sender)
@@ -41,13 +49,17 @@ class ChatCommands(val plugin: SimpleChatMod) {
 
     private fun sendInfo(sender: Player) {
         UpdateChecker.getVersion { latest ->
+            val pluginVersion = plugin.description.version
+
+            val statusMessage =
+                if (latest != pluginVersion) "$pluginVersion Outdated" else "$pluginVersion Latest version!"
             val msg =
                 mutableListOf(style("<red><bold>Simple Chat Moderation"))
                     .plus(
                         plugin.config.getStringList("plugin-info")
                             .map { line ->
                                 line
-                                    .replace("{currentVersion}", plugin.description.version)
+                                    .replace("{currentVersion}", statusMessage)
                                     .replace("{latestVersion}", latest!!)
                                     .replace("{database}", plugin.dbConfig.getString("database-type"))
                                     .replace(
@@ -62,24 +74,28 @@ class ChatCommands(val plugin: SimpleChatMod) {
     }
 
     @Command("mutechat")
+    @Usage("/mutechat")
     @CommandPermission(Permissions.MUTE_CHAT_PERMISSION)
     fun onMuteChat(sender: Player) {
         plugin.chatStateManager.toggleChatMuted(sender)
     }
 
     @Command("slowchat")
+    @Usage("/slowchat <seconds>")
     @CommandPermission(Permissions.SLOW_CHAT)
     fun onSlowChat(sender: Player, @Named("seconds") @Range(min = 0.0) amount: Int) {
         plugin.chatStateManager.slowChat(amount)
     }
 
     @Command("resetslowchat")
+    @Usage("/resetslowchat")
     @CommandPermission(Permissions.SLOW_CHAT)
     fun onSlowChat(sender: Player) {
         plugin.chatStateManager.resetSlow()
     }
 
     @Command("chatlogs")
+    @Usage("/chatlogs <player> <page>")
     @CommandPermission(Permissions.VIEW_CHAT_LOG_PERMISSION)
     suspend fun chatLogs(
         sender: Player,
@@ -128,6 +144,7 @@ class ChatCommands(val plugin: SimpleChatMod) {
     }
 
     @Command("chatreports", "handlechatreports", "reports")
+    @Usage("/chatreports [player]")
     @CommandPermission(Permissions.CHAT_REPORT_HANDLE_PERMISSION)
     fun onHandleReport(sender: Player, @Optional @Named("player") target: UserCommandParameter?) {
         launchAsync {
@@ -152,6 +169,7 @@ class ChatCommands(val plugin: SimpleChatMod) {
     }
 
     @Command("chatreport")
+    @Usage("/chatreport <target> <reason>")
     fun onChatReport(
         sender: Player,
         @Named("target") target: UserCommandParameter,
@@ -220,7 +238,5 @@ class ChatCommands(val plugin: SimpleChatMod) {
             sender.sendStyled(plugin.config.getString("chat-report-success")!!)
 
         }
-
     }
-
 }

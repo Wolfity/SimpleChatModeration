@@ -18,16 +18,42 @@ class ChatFilter(filteredWords: List<String>) {
 
     init {
         for (word in filteredWords) {
-            addWord(word.lowercase().filter { it.isLetter() })
+            addWord(word)
         }
     }
 
-    private fun addWord(word: String) {
+    fun addWord(rawWord: String) {
+        val word = rawWord.lowercase().filter { it.isLetter() }
         var node = root
         for (char in word) {
             node = node.children.computeIfAbsent(char) { TrieNode() }
         }
         node.isEnd = true
+    }
+
+    fun removeWord(rawWord: String) {
+        val word = rawWord.lowercase().filter { it.isLetter() }
+        removeWord(root, word, 0)
+    }
+
+    private fun removeWord(node: TrieNode, word: String, index: Int): Boolean {
+        if (index == word.length) {
+            if (!node.isEnd) return false
+            node.isEnd = false
+            return node.children.isEmpty()
+        }
+
+        val char = word[index]
+        val child = node.children[char] ?: return false
+
+        val shouldDeleteChild = removeWord(child, word, index + 1)
+
+        if (shouldDeleteChild) {
+            node.children.remove(char)
+            return node.children.isEmpty() && !node.isEnd
+        }
+
+        return false
     }
 
     private fun normalizeInput(input: String): String {
@@ -56,9 +82,6 @@ class ChatFilter(filteredWords: List<String>) {
         return false
     }
 
-    /**
-     * Finds all filtered words in a string.
-     */
     fun findFilteredWords(rawInput: String): List<WordMatch> {
         val normalized = normalizeInput(rawInput)
         val matches = mutableListOf<WordMatch>()

@@ -27,6 +27,21 @@ plugin-info:
   - "<red>Database Type: {database}"
   - "<red>Valid Webhook URL: {webhookEnabled}"
 
+word-not-in-filter: "<red>The word <gray>{word} <red> is not in the current filter!"
+word-already-in-filter: "<red>The word <gray>{word} <red> is already in the current filter!"
+no-filtered-words: "<red>The filter is empty!"
+filtered-word-list:
+    header: "<gray>-- <green>Filtered Words Page {page}/{maxPages} <gray>--"
+    entry: "- <yellow>{word}"
+    footer: "<gray>Click: {previousButton} - {nextButton}"
+    previous-button: "<green>[Previous]"
+    next-button: "<green>[Next]"
+    remove-button: "<red>[REMOVE]"
+    page-size: 10
+    next-page-hover-text: "<gray>Click to go to next page ({nextPage})"
+    previous-page-hover-text: "<gray>Click to go to the previous page ({previousPage})"
+    remove-word-hover-text: "<gray>Click to remove '{word}'"
+
 cannot-self-report: "<red>You cannot report yourself!"
 player-does-not-exist: "<red>The player {player} does not exist!"
 invalid-chatlog-page: "<red>This player does not have logs on that page"

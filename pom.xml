@@ -6,7 +6,7 @@
 
     <groupId>me.wolfity</groupId>
     <artifactId>SimpleChatModeration</artifactId>
-    <version>1.5.1</version>
+    <version>1.6.0</version>
     <packaging>jar</packaging>
 
     <name>SimpleChatModeration</name>
@@ -150,17 +150,19 @@
         <dependency>
             <groupId>io.github.revxrsal</groupId>
             <artifactId>lamp.common</artifactId>
-            <version>4.0.0-beta.19</version>
+            <version>4.0.0-rc.12</version>
         </dependency>
-        <dependency>
-            <groupId>io.github.revxrsal</groupId>
-            <artifactId>lamp.bukkit</artifactId>
-            <version>4.0.0-beta.19</version>
-        </dependency>
+
         <dependency>
             <groupId>io.github.revxrsal</groupId>
             <artifactId>lamp.brigadier</artifactId>
-            <version>4.0.0-beta.19</version>
+            <version>4.0.0-rc.12</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.revxrsal</groupId>
+            <artifactId>lamp.bukkit</artifactId>
+            <version>4.0.0-rc.12</version>
         </dependency>
 
         <!-- Kotlin Dependencies -->

@@ -3,8 +3,11 @@ package me.wolfity
 import me.wolfity.cache.ChatCacheFlushScheduler
 import me.wolfity.cache.ChatMessageCache
 import me.wolfity.commands.ChatCommands
+import me.wolfity.commands.FilterCommands
+import me.wolfity.commands.LampExceptionHandler
 import me.wolfity.commands.UserCommandParameter
 import me.wolfity.commands.UserParameterType
+import me.wolfity.commands.WordSuggestions
 import me.wolfity.gui.GUIListener
 import me.wolfity.listeners.ChatListeners
 import me.wolfity.player.PlayerListeners
@@ -15,11 +18,14 @@ import me.wolfity.misc.UpdateChecker
 import me.wolfity.reports.ChatReportManager
 import me.wolfity.db.DatabaseManager
 import me.wolfity.files.CustomConfig
+import me.wolfity.filter.ChatFilter
+import me.wolfity.util.style
 import me.wolfity.webhook.WebhookManager
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import revxrsal.commands.Lamp
 import revxrsal.commands.bukkit.BukkitLamp
+import revxrsal.commands.bukkit.BukkitLampConfig
 import revxrsal.commands.bukkit.actor.BukkitCommandActor
 
 lateinit var plugin: SimpleChatMod
@@ -38,6 +44,7 @@ class SimpleChatMod : JavaPlugin() {
     private lateinit var _chatMessageCache: ChatMessageCache
     private lateinit var cacheFlusher: ChatCacheFlushScheduler
     private lateinit var _webhookManager: WebhookManager
+    private lateinit var _chatFilter: ChatFilter
 
     val chatReportManager: ChatReportManager
         get() = _chatReportManager
@@ -57,6 +64,9 @@ class SimpleChatMod : JavaPlugin() {
     val webhookManager: WebhookManager
         get() = _webhookManager
 
+    val chatFilter: ChatFilter
+        get() = _chatFilter
+
     lateinit var dbConfig: CustomConfig
     lateinit var filteredWordsConfig: CustomConfig
 
@@ -71,6 +81,8 @@ class SimpleChatMod : JavaPlugin() {
         registerManagers()
         registerListeners()
         registerCommands()
+
+        this._chatFilter = ChatFilter(filteredWordsConfig.getStringList("filtered-words"))
 
         this.cacheFlusher = ChatCacheFlushScheduler(chatMessageManager)
         cacheFlusher.start()
@@ -98,13 +110,20 @@ class SimpleChatMod : JavaPlugin() {
 
     private fun registerCommands() {
         lamp.register(ChatCommands(this))
+        lamp.register(FilterCommands())
     }
 
     private fun setupLamp() {
-        this.lamp = BukkitLamp.builder(this)
+        val lampConfig: BukkitLampConfig<BukkitCommandActor> = BukkitLampConfig.builder<BukkitCommandActor>(this)
+            .disableBrigadier()
+            .enableAsyncCompletion()
+            .build()
+
+        this.lamp = BukkitLamp.builder(lampConfig)
             .parameterTypes {
                 it.addParameterType(UserCommandParameter::class.java, UserParameterType())
             }
+            .exceptionHandler(LampExceptionHandler())
             .build()
     }
 
