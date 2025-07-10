@@ -52,7 +52,7 @@ class ChatCommands(val plugin: SimpleChatMod) {
             val pluginVersion = plugin.description.version
 
             val statusMessage =
-                if (latest != pluginVersion) "$pluginVersion Outdated" else "$pluginVersion Latest version!"
+                if (latest != pluginVersion) "$pluginVersion :Outdated" else "$pluginVersion Latest version!"
             val msg =
                 mutableListOf(style("<red><bold>Simple Chat Moderation"))
                     .plus(
