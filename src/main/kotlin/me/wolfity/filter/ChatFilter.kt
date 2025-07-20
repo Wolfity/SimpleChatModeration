@@ -7,13 +7,9 @@ class ChatFilter(filteredWords: List<String>) {
     private val root = TrieNode()
 
     val substitutions = mapOf(
-        '1' to 'i',
-        '!' to 'i',
-        '@' to 'a',
-        '3' to 'e',
-        '0' to 'o',
-        '$' to 's',
-        '7' to 't'
+        '1' to 'i', '!' to 'i', '@' to 'a', '3' to 'e', '0' to 'o',
+        '$' to 's', '7' to 't', '5' to 's', '+' to 't', '€' to 'e',
+        '£' to 'l', '¥' to 'y', '§' to 's', '¿' to 'i', '¡' to 'i'
     )
 
     init {
@@ -56,35 +52,35 @@ class ChatFilter(filteredWords: List<String>) {
         return false
     }
 
-    private fun normalizeInput(input: String): String {
-        return input.lowercase().mapNotNull { c ->
-            when {
-                c.isLetter() -> c
-                substitutions.containsKey(c) -> substitutions[c]
+    private fun normalizeInput(rawInput: String): Pair<StringBuilder, List<Int>> {
+        val normalized = StringBuilder()
+        val indexMap = mutableListOf<Int>()
+        for ((index, char) in rawInput.withIndex()) {
+            val normChar = when {
+                char.isLetter() -> char.lowercaseChar()
+                substitutions.containsKey(char) -> substitutions[char]!!
                 else -> null
             }
-        }.joinToString("")
+            if (normChar != null) {
+                normalized.append(normChar)
+                indexMap.add(index)
+            }
+        }
+        return normalized to indexMap
     }
 
     fun containsFilteredWord(rawInput: String): Boolean {
-        val normalized = normalizeInput(rawInput)
-        var i = 0
-        while (i < normalized.length) {
-            var node = root
-            var j = i
-            while (j < normalized.length && node.children.containsKey(normalized[j])) {
-                node = node.children[normalized[j]]!!
-                if (node.isEnd) return true
-                j++
-            }
-            i++
-        }
-        return false
+        return matchFilteredWords(rawInput, firstOnly = true).isNotEmpty()
     }
 
     fun findFilteredWords(rawInput: String): List<WordMatch> {
-        val normalized = normalizeInput(rawInput)
+        return matchFilteredWords(rawInput, firstOnly = false)
+    }
+
+    private fun matchFilteredWords(rawInput: String, firstOnly: Boolean): List<WordMatch> {
+        val (normalized, indexMap) = normalizeInput(rawInput)
         val matches = mutableListOf<WordMatch>()
+
         var i = 0
         while (i < normalized.length) {
             var node = root
@@ -92,7 +88,17 @@ class ChatFilter(filteredWords: List<String>) {
             while (j < normalized.length && node.children.containsKey(normalized[j])) {
                 node = node.children[normalized[j]]!!
                 if (node.isEnd) {
-                    matches.add(WordMatch(i, j + 1))
+                    val startOriginal = indexMap[i]
+                    val endOriginal = indexMap[j] + 1
+
+                    // Word bound check
+                    val before = if (startOriginal > 0) rawInput[startOriginal - 1] else ' '
+                    val after = if (endOriginal < rawInput.length) rawInput[endOriginal] else ' '
+
+                    if (!before.isLetterOrDigit() && !after.isLetterOrDigit()) {
+                        matches.add(WordMatch(startOriginal, endOriginal))
+                        if (firstOnly) return matches
+                    }
                 }
                 j++
             }

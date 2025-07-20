@@ -27,6 +27,8 @@ plugin-info:
   - "<red>Database Type: {database}"
   - "<red>Valid Webhook URL: {webhookEnabled}"
 
+filtered-word-highlight-color: "<yellow>"
+
 word-not-in-filter: "<red>The word <gray>{word} <red> is not in the current filter!"
 word-already-in-filter: "<red>The word <gray>{word} <red> is already in the current filter!"
 no-filtered-words: "<red>The filter is empty!"

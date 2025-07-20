@@ -13,6 +13,11 @@ import me.wolfity.util.miniMessage
 import me.wolfity.util.sendStyled
 import me.wolfity.util.style
 import me.wolfity.webhook.WebhookManager
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.Style
+import net.kyori.adventure.text.format.TextColor
+import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -83,11 +88,13 @@ class ChatListeners(private val plugin: SimpleChatMod) : Listener {
     }
 
     private fun handleFiltering(event: AsyncChatEvent, rawMessage: String, player: Player) {
+        val matches = plugin.chatFilter.findFilteredWords(rawMessage)
+        val highlighted = highlightMessage(rawMessage, matches)
         Bukkit.getOnlinePlayers().filter { it.hasPermission(Permissions.CHAT_FILTER_NOTIFY_PERMISSION) }.forEach {
             it.sendStyled(
                 plugin.config.getString("chat-message-filtered-staff-notification")!!
                     .replace("{sender}", miniMessage.serialize(player.displayName()))
-                    .replace("{message}", rawMessage)
+                    .replace("{message}", highlighted)
             )
         }
 
@@ -98,7 +105,6 @@ class ChatListeners(private val plugin: SimpleChatMod) : Listener {
                 player.sendStyled(plugin.config.getString("chat-filter-filtered")!!)
             }
         } else {
-            val matches = plugin.chatFilter.findFilteredWords(rawMessage)
             val censored = censorMessage(rawMessage, matches)
             event.message(style(censored))
         }
@@ -107,8 +113,8 @@ class ChatListeners(private val plugin: SimpleChatMod) : Listener {
             plugin.webhookManager.sendEmbedMessage(
                 it
                     .replace("{sender}", player.name)
-                    .replace("{message}",  rawMessage)
-                , WebhookManager.NotificationReason.FILTER)
+                    .replace("{message}", rawMessage), WebhookManager.NotificationReason.FILTER
+            )
         }
 
     }
@@ -124,4 +130,49 @@ class ChatListeners(private val plugin: SimpleChatMod) : Listener {
         }
         return result.toString()
     }
+
+    private fun highlightMessage(original: String, matches: List<WordMatch>): String {
+        if (matches.isEmpty()) return original
+
+        val highlightTag = plugin.config.getString("filtered-word-highlight-color") ?: "<yellow>"
+        val sortedMatches = matches.sortedBy { it.start }
+        val builder = StringBuilder()
+        var lastIndex = 0
+
+        // Grab the last color of this, to re-style after applying the highlight
+        val originalFilterMessage = plugin.config.getString("chat-message-filtered-staff-notification")!!
+
+        for (match in sortedMatches) {
+            if (match.start > lastIndex) {
+                builder.append(original.substring(lastIndex, match.start))
+            }
+
+            val filteredWord = original.substring(match.start, match.end)
+
+            val restoredStyle = getLastColor(style(originalFilterMessage))
+            builder.append(highlightTag)
+                .append(filteredWord)
+                .append("<reset>")
+                .append("<$restoredStyle>")
+
+            lastIndex = match.end
+        }
+
+        if (lastIndex < original.length) {
+            builder.append(original.substring(lastIndex))
+        }
+
+        return builder.toString()
+    }
+
+    private fun getLastColor(component: Component): TextColor? {
+        component.children()
+        for (child in component.children().asReversed()) {
+            val color = getLastColor(child)
+            if (color != null) return color
+        }
+
+        return component.color()
+    }
+
 }
