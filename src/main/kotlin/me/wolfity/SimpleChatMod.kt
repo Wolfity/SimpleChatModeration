@@ -132,6 +132,11 @@ class SimpleChatMod : JavaPlugin() {
         filteredWordsConfig = CustomConfig("filtered-words.yml")
     }
 
+    fun reloadConfigFiles() {
+        filteredWordsConfig = CustomConfig("filtered-words.yml")
+        this.reloadConfig()
+    }
+
     private fun updateCheck() {
         UpdateChecker.getVersion { version ->
             if (this.description.version == version) {

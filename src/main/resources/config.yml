@@ -64,6 +64,10 @@ chat-slow-announcement: "<red>The chat has been slowed to one message per {time}
 chat-slow-message: "<red>Hold on, chat is currently slowed! 1 message per {time} second(s)!"
 chat-slow-reset: "<red>The chat slow has been lifted!"
 
+chat-cleared: "<red>Chat has been cleared by {player}!"
+
+config-reloaded: "<green>The config has been reloaded!"
+
 no-messages-in-past-time: "<red>This player has not sent any messages in the past {minutes} minutes!"
 # When dealing with a chat report, the logs of the reported person
 # Starting from the current time PLUS and MINUS  the value of this will be shown.

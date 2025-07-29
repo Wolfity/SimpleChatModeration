@@ -24,8 +24,11 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
+import java.util.UUID
 
 class ChatListeners(private val plugin: SimpleChatMod) : Listener {
+
+    private val latestAttempt: MutableMap<UUID, Long> = mutableMapOf()
 
     @EventHandler
     fun onChatMuted(event: ChatMutedEvent) {
@@ -57,11 +60,12 @@ class ChatListeners(private val plugin: SimpleChatMod) : Listener {
         val rawMessage = miniMessage.serialize(message)
         val containsFiltered = plugin.chatFilter.containsFilteredWord(rawMessage)
 
+        handleSlow(event, player)
+        if (event.isCancelled) return
+
         if (containsFiltered && !player.hasPermission(Permissions.CHAT_FILTER_BYPASS_PERMISSION)) {
             handleFiltering(event, rawMessage, player)
         }
-        handleSlow(event, player)
-
         if (event.isCancelled) return
 
         val pureContent = PlainTextComponentSerializer.plainText().serialize(message)
@@ -71,17 +75,17 @@ class ChatListeners(private val plugin: SimpleChatMod) : Listener {
     private fun handleSlow(event: AsyncChatEvent, player: Player) {
         val slowSeconds = plugin.chatStateManager.chatSlowSeconds
         if (slowSeconds > 0 && !player.hasPermission(Permissions.SLOW_CHAT_BYPASS)) {
-            val lastMessages = plugin.chatMessageCache.getMessages(player.uniqueId)
-            val lastMessageTime = lastMessages?.maxByOrNull { it.timestamp }?.timestamp ?: return
+            val lastAttempt = this.latestAttempt.getOrDefault(player.uniqueId, 0)
             val now = System.currentTimeMillis()
             val cooldownMillis = slowSeconds * 1000L
 
-            if (now - lastMessageTime < cooldownMillis) {
+            if (now - lastAttempt < cooldownMillis) {
                 player.sendStyled(
                     plugin.config.getString("chat-slow-message")!!
                         .replace("{time}", slowSeconds.toString())
                 )
                 event.isCancelled = true
+                this.latestAttempt.put(player.uniqueId, System.currentTimeMillis())
                 return
             }
         }

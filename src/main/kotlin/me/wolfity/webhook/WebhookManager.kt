@@ -12,22 +12,19 @@ import kotlin.time.toJavaDuration
 
 class WebhookManager {
 
-    private val webhookUrl: String? by lazy {
-        plugin.config.getString("webhook-url")
-    }
-
     private val httpClient: HttpClient = HttpClient.newBuilder()
         .connectTimeout(10.seconds.toJavaDuration())
         .build()
 
     fun sendEmbedMessage(message: String, reason: NotificationReason) {
+        val webhookUrl = plugin.config.getString("webhook-url")
         val cleanMessage = stripMiniMessage(message)
         val jsonPayload = buildEmbedJson(cleanMessage, reason)
         if (webhookUrl.isNullOrEmpty()) return
         launchAsync {
             try {
                 val request = HttpRequest.newBuilder()
-                    .uri(URI.create(webhookUrl!!))
+                    .uri(URI.create(webhookUrl))
                     .header("Content-Type", "application/json")
                     .timeout(Duration.ofSeconds(10))
                     .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))

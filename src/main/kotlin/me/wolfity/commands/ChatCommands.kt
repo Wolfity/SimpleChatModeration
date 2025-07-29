@@ -17,6 +17,7 @@ import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
+import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import org.checkerframework.checker.units.qual.h
 import revxrsal.commands.annotation.Command
@@ -38,6 +39,13 @@ class ChatCommands(val plugin: SimpleChatMod) {
         sendInfo(sender)
     }
 
+    @Command("scm reload")
+    @CommandPermission((Permissions.ADMIN_PERMISSION))
+    fun onReload(sender: Player) {
+         plugin.reloadConfigFiles()
+        sender.sendStyled(plugin.config.getString("config-reloaded")!!)
+        plugin.chatStateManager.slowChat(plugin.config.getInt("chat-slow-seconds", 0))
+    }
 
     @Command("scm", "simplechatmod", "simplechatmoderation")
     @Subcommand("about", "info")
@@ -141,6 +149,18 @@ class ChatCommands(val plugin: SimpleChatMod) {
         }
 
         sender.sendStyled(plugin.config.getString("chat-log-footer")!!)
+    }
+
+    @Command("clearchat", "cc")
+    @CommandPermission(Permissions.CLEAR_CHAT_PERMISSION)
+    fun onClear(sender: Player) {
+        Bukkit.getOnlinePlayers().forEach { p ->
+            repeat(500) {
+                p.sendMessage("")
+            }
+
+            p.sendMessage(style(plugin.config.getString("chat-cleared")!!.replace("{player}", sender.name)))
+        }
     }
 
     @Command("chatreports", "handlechatreports", "reports")
