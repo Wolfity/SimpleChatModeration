@@ -135,6 +135,7 @@ class SimpleChatMod : JavaPlugin() {
     fun reloadConfigFiles() {
         filteredWordsConfig = CustomConfig("filtered-words.yml")
         this.reloadConfig()
+        this._chatFilter = ChatFilter(filteredWordsConfig.getStringList("filtered-words"))
     }
 
     private fun updateCheck() {
